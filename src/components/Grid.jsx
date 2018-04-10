@@ -1,6 +1,8 @@
 import React from 'react';
 import _ from "lodash";
 import {WidthProvider, Responsive} from 'react-grid-layout';
+import Clock from './Clock.jsx'
+
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 class Grid extends React.PureComponent {
@@ -8,13 +10,14 @@ class Grid extends React.PureComponent {
     className: "layout",
     cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2},
 		rowHeight: 100,
+		autoSize: true,
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-			items: [0, 1, 2, 3, 4].map(function(i, key, list) {
+			items: [0, 1, 2].map(function(i, key, list) {
 				return {
 					i: i.toString(),
 					x: i * 2,
@@ -39,24 +42,16 @@ class Grid extends React.PureComponent {
 			top: 0,
 			cursor: 'pointer'
 		};
-		const i = el.add ? '+' : el.i;
+		const i = el.i;
 		return (
 			<div key={i} data-grid={el}>
-				{el.add ? (
-					<span
-						className='add text'
-						onClick={this.onAddItem}
-						title='You can add an item by clicking here, too.'>
-						Add +
-					</span>
-				) : (
-					<span className='text'>{i}</span>
-				)}
+				<span className='text'>{i}</span>
+				<Clock/>
 				<span
 					className='remove'
 					style={removeStyle}
 					onClick={this.onRemoveItem.bind(this, i)} >
-					x
+					X
 				</span>
 			</div>
 		);
@@ -97,7 +92,7 @@ class Grid extends React.PureComponent {
     // layout is an array of objects, see the demo for more complete usage
     return (
 		<div>
-			<button onClick={this.onAddItem}>Add Item</button>
+			<button className='addButton' onClick={this.onAddItem}>Add Item</button>
 			<ResponsiveReactGridLayout
 				onLayoutChange={this.onLayoutChange}
 				onBreakPointChange={this.onBreakPointChange}

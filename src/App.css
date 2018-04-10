@@ -8,7 +8,25 @@
   transition: height 200ms ease;
 }
 .react-grid-item {
-	background: grey;
+	text-align: center;
+	background: #ccc;
+	border: 1px solid black;
   transition: all 200ms ease;
   transition-property: left, top;
+}
+
+.klokje {
+	font-size: 20px;
+	position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.text {
+	float: left;
+}
+
+.addButton {
+	margin-left: 10px;
 }
