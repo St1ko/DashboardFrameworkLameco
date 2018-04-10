@@ -1,0 +1,14 @@
+.App {
+  text-align: center;
+}
+
+.react-grid-layout {
+	background: white;
+  position: relative;
+  transition: height 200ms ease;
+}
+.react-grid-item {
+	background: grey;
+  transition: all 200ms ease;
+  transition-property: left, top;
+}
