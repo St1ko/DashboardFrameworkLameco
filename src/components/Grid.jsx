@@ -1,70 +1,109 @@
 import React from 'react';
 import _ from "lodash";
-import RGL, {WidthProvider} from 'react-grid-layout';
+import {WidthProvider, Responsive} from 'react-grid-layout';
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-const ReactGridLayout = WidthProvider(RGL);
-// var layout = [
-// 	{i: 'a', x: 0, y: 0, w: 4, h: 2},
-// 	{i: 'b', x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4},
-// 	{i: 'c', x: 4, y: 0, w: 1, h: 2}
-// ];
-class Grid extends React.Component {
+class Grid extends React.PureComponent {
 	static defaultProps = {
     className: "layout",
-    items: 12,
-    rowHeight: 30,
-    onLayoutChange: function() {},
-    cols: 12
+    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2},
+		rowHeight: 100,
   };
 
   constructor(props) {
     super(props);
 
-    const layout = this.generateLayout();
-    this.state = { layout };
+    this.state = {
+			items: [0, 1, 2, 3, 4].map(function(i, key, list) {
+				return {
+					i: i.toString(),
+					x: i * 2,
+					y: 0,
+					w: 2,
+					h: 2,
+					add: i === (list.length - 1).toString()
+				};
+			}),
+			newCounter: 0
+		};
+
+		this.onAddItem = this.onAddItem.bind(this);
+		this.onBreakPointChange = this.onBreakPointChange.bind(this);
+		this.onLayoutChange = this.onLayoutChange.bind(this);
   }
 
-  generateDOM() {
-    return _.map(_.range(this.props.items), function(i) {
-      return (
-        <div key={i}>
-          <span className="text">{i}</span>
-        </div>
-      );
-    });
-  }
-
-  generateLayout() {
-    const p = this.props;
-    return _.map(new Array(p.items), function(item, i) {
-      const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-      return {
-        x: (i * 2) % 12,
-        y: Math.floor(i / 6) * y,
-        w: 2,
-        h: y,
-        i: i.toString()
-      };
-    });
-  }
-
-  onLayoutChange(layout) {
-    this.props.onLayoutChange(layout);
-  }
+	createElement(el) {
+		const removeStyle = {
+			position: 'absolute',
+			right: '2px',
+			top: 0,
+			cursor: 'pointer'
+		};
+		const i = el.add ? '+' : el.i;
+		return (
+			<div key={i} data-grid={el}>
+				{el.add ? (
+					<span
+						className='add text'
+						onClick={this.onAddItem}
+						title='You can add an item by clicking here, too.'>
+						Add +
+					</span>
+				) : (
+					<span className='text'>{i}</span>
+				)}
+				<span
+					className='remove'
+					style={removeStyle}
+					onClick={this.onRemoveItem.bind(this, i)} >
+					x
+				</span>
+			</div>
+		);
+	}
 
 	onAddItem() {
-		this.defaultProps.items++;
+		console.log('adding', 'n' + this.state.newCounter);
+		this.setState({
+			items: this.state.items.concat({
+				i: 'n' + this.state.newCounter,
+				x: (this.state.items.length * 2) % (this.state.cols || 12),
+				y: Infinity,
+				w: 2,
+				h: 2
+			}),
+			newCounter: this.state.newCounter + 1
+		});
+	}
+
+	onBreakPointChange(breakpoint, cols) {
+		this.setState({
+			breakpoint: breakpoint,
+			cols: cols
+		});
+	}
+
+	onLayoutChange(layout) {
+		//this.props.onLayoutChange(layout);
+		this.setState({ layout: layout });
+	}
+
+	onRemoveItem(i) {
+		console.log('removing', i);
+		this.setState({ items: _.reject(this.state.items, {i: i }) });
 	}
 
   render() {
     // layout is an array of objects, see the demo for more complete usage
     return (
 		<div>
-			<button onClick={this.onAddItem.bind(this)}>Add Item</button>
-			<ReactGridLayout layout={this.state.layout} onLayoutChange={this.onLayoutChange}
+			<button onClick={this.onAddItem}>Add Item</button>
+			<ResponsiveReactGridLayout
+				onLayoutChange={this.onLayoutChange}
+				onBreakPointChange={this.onBreakPointChange}
 				{...this.props}>
-				{this.generateDOM()}
-			</ReactGridLayout>
+				{_.map(this.state.items, el => this.createElement(el))}
+			</ResponsiveReactGridLayout>
 		</div>
 		);
   }

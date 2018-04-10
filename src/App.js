@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
-import Grid2 from './components/Grid2.jsx';
+import Grid from './components/Grid.jsx';
 
 
 class App extends Component {
   render() {
     return (
-			<Grid2/>
+			<Grid/>
     );
   }
 }
