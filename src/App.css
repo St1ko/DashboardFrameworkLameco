@@ -15,7 +15,7 @@
   transition-property: left, top;
 }
 
-.klokje {
+.widget {
 	font-size: 20px;
 	position: fixed;
   top: 50%;
@@ -27,6 +27,18 @@
 	float: left;
 }
 
+.widgetselecter {
+	padding-top: 5px;
+	margin-left: 10px;
+}
+
+.dropdown {
+	width: 150px;
+	display: inline-block;
+}
+
 .addButton {
 	margin-left: 10px;
+	position: absolute;
+	top: 8px;
 }

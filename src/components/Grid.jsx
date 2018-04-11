@@ -1,7 +1,9 @@
 import React from 'react';
 import _ from "lodash";
 import {WidthProvider, Responsive} from 'react-grid-layout';
-import Clock from './Clock.jsx'
+import Clock from './Clock.jsx';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -13,6 +15,7 @@ class Grid extends React.PureComponent {
 		autoSize: true,
   };
 
+	// let choice = '';
   constructor(props) {
     super(props);
 
@@ -24,9 +27,10 @@ class Grid extends React.PureComponent {
 					y: 0,
 					w: 2,
 					h: 2,
-					add: i === (list.length - 1).toString()
+					widget: '',
 				};
 			}),
+			selectedOption: '',
 			newCounter: 0
 		};
 
@@ -43,10 +47,21 @@ class Grid extends React.PureComponent {
 			cursor: 'pointer'
 		};
 		const i = el.i;
+		const widget = el.widget;
+
 		return (
 			<div key={i} data-grid={el}>
 				<span className='text'>{i}</span>
-				<Clock/>
+				<div className= 'widget'>
+					{(() => {
+						switch(widget) {
+							case 'Clock':
+								return <Clock/>;
+							default:
+								return <span>{widget}</span>;
+							}
+						})()}
+				</div>
 				<span
 					className='remove'
 					style={removeStyle}
@@ -58,6 +73,9 @@ class Grid extends React.PureComponent {
 	}
 
 	onAddItem() {
+		if(this.state.selectedOption) {
+			console.log(this.state.selectedOption.value);
+		}
 		console.log('adding', 'n' + this.state.newCounter);
 		this.setState({
 			items: this.state.items.concat({
@@ -65,7 +83,8 @@ class Grid extends React.PureComponent {
 				x: (this.state.items.length * 2) % (this.state.cols || 12),
 				y: Infinity,
 				w: 2,
-				h: 2
+				h: 2,
+				widget: this.state.selectedOption ? this.state.selectedOption.value : '',
 			}),
 			newCounter: this.state.newCounter + 1
 		});
@@ -88,11 +107,34 @@ class Grid extends React.PureComponent {
 		this.setState({ items: _.reject(this.state.items, {i: i }) });
 	}
 
+
+  handleChange = (selectedOption) => {
+    this.setState({ selectedOption });
+		if (selectedOption) {
+    console.log(`Selected: ${selectedOption.label}`);
+		};
+		// choice = selectedOption.value;
+  }
+
   render() {
-    // layout is an array of objects, see the demo for more complete usage
+		const { selectedOption } = this.state;
+    const value = selectedOption && selectedOption.value;
+
     return (
 		<div>
-			<button className='addButton' onClick={this.onAddItem}>Add Item</button>
+			<div className='widgetselecter'>
+				<Select className='dropdown'
+					name="form-field-name"
+					value={value}
+					onChange={this.handleChange}
+					options={[
+						{ value: 'one', label: 'One' },
+						{ value: 'two', label: 'Two' },
+						{ value: 'Clock', label: 'Clock' },
+					]}
+					/>
+				<button className='addButton' onClick={this.onAddItem}>Add Item</button>
+			</div>
 			<ResponsiveReactGridLayout
 				onLayoutChange={this.onLayoutChange}
 				onBreakPointChange={this.onBreakPointChange}
