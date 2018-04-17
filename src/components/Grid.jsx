@@ -6,7 +6,7 @@ import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-const originalLayouts = getFromLS("layouts") || [0, 1, 2];
+const originalLayouts = getFromLS("layouts") || [];
 
 class Grid extends React.PureComponent {
 	static defaultProps = {
