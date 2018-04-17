@@ -6,6 +6,7 @@ import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
+const originalLayouts = getFromLS("layouts") || [0, 1, 2];
 
 class Grid extends React.PureComponent {
 	static defaultProps = {
@@ -15,23 +16,22 @@ class Grid extends React.PureComponent {
 		autoSize: true,
   };
 
-	// let choice = '';
   constructor(props) {
     super(props);
 
     this.state = {
-			items: [0, 1, 2].map(function(i, key, list) {
+			items: originalLayouts.map(function(i, key, list) {
 				return {
-					i: i.toString(),
-					x: i * 2,
-					y: 0,
-					w: 2,
-					h: 2,
-					widget: '',
+					i: originalLayouts[key].i,
+					x: originalLayouts[key].x,
+					y: originalLayouts[key].y,
+					w: originalLayouts[key].w,
+					h: originalLayouts[key].h,
+					widget: originalLayouts[key].widget,
 				};
 			}),
 			selectedOption: '',
-			newCounter: 0
+			newCounter: originalLayouts.length
 		};
 
 		this.onAddItem = this.onAddItem.bind(this);
@@ -51,7 +51,6 @@ class Grid extends React.PureComponent {
 
 		return (
 			<div key={i} data-grid={el}>
-				<span className='text'>{i}</span>
 				<div className= 'widget'>
 					{(() => {
 						switch(widget) {
@@ -74,9 +73,10 @@ class Grid extends React.PureComponent {
 
 	onAddItem() {
 		if(this.state.selectedOption) {
-			console.log(this.state.selectedOption.value);
+			console.log('adding', 'n' + this.state.newCounter + '; ' + this.state.selectedOption.value);
+		} else {
+			console.log('adding', 'n' + this.state.newCounter);
 		}
-		console.log('adding', 'n' + this.state.newCounter);
 		this.setState({
 			items: this.state.items.concat({
 				i: 'n' + this.state.newCounter,
@@ -98,8 +98,15 @@ class Grid extends React.PureComponent {
 	}
 
 	onLayoutChange(layout) {
-		//this.props.onLayoutChange(layout);
 		this.setState({ layout: layout });
+		/* add widget attribute from items array to objects in layout array,
+		 * so that widgets are also saved to localStorage
+		**/
+		for (var i = 0; i < this.state.items.length; i++) {
+			layout[i].widget = this.state.items[i].widget;
+			console.log(this.state.items[i].widget);
+		}
+		saveToLS('layouts', layout);
 	}
 
 	onRemoveItem(i) {
@@ -107,13 +114,11 @@ class Grid extends React.PureComponent {
 		this.setState({ items: _.reject(this.state.items, {i: i }) });
 	}
 
-
   handleChange = (selectedOption) => {
     this.setState({ selectedOption });
 		if (selectedOption) {
     console.log(`Selected: ${selectedOption.label}`);
 		};
-		// choice = selectedOption.value;
   }
 
   render() {
@@ -143,6 +148,31 @@ class Grid extends React.PureComponent {
 			</ResponsiveReactGridLayout>
 		</div>
 		);
+  }
+}
+
+//retreive layout from local storage
+function getFromLS(key) {
+  let ls = {};
+  if (global.localStorage) {
+    try {
+      ls = JSON.parse(global.localStorage.getItem("rgl-8")) || {};
+    } catch (e) {
+      /*Ignore*/
+    }
+  }
+  return ls[key];
+}
+
+//save layout to local storage
+function saveToLS(key, value) {
+  if (global.localStorage) {
+    global.localStorage.setItem(
+      "rgl-8",
+      JSON.stringify({
+        [key]: value
+      })
+    );
   }
 }
 
