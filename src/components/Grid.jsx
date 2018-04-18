@@ -37,6 +37,7 @@ class Grid extends React.PureComponent {
 		this.onAddItem = this.onAddItem.bind(this);
 		this.onBreakPointChange = this.onBreakPointChange.bind(this);
 		this.onLayoutChange = this.onLayoutChange.bind(this);
+		this.onLayoutReset = this.onLayoutReset.bind(this);
   }
 
 	createElement(el) {
@@ -51,11 +52,13 @@ class Grid extends React.PureComponent {
 
 		return (
 			<div key={i} data-grid={el}>
-				<div className= 'widget'>
+				<div className='widget'>
 					{(() => {
 						switch(widget) {
 							case 'Clock':
 								return <Clock/>;
+							case 'Photo':
+								return <div className='photo'></div>;
 							default:
 								return <span>{widget}</span>;
 							}
@@ -90,6 +93,11 @@ class Grid extends React.PureComponent {
 		});
 	}
 
+	onLayoutReset() {
+		localStorage.clear();
+		window.location.reload();
+	}
+
 	onBreakPointChange(breakpoint, cols) {
 		this.setState({
 			breakpoint: breakpoint,
@@ -104,13 +112,11 @@ class Grid extends React.PureComponent {
 		**/
 		for (var i = 0; i < this.state.items.length; i++) {
 			layout[i].widget = this.state.items[i].widget;
-			console.log(this.state.items[i].widget);
 		}
 		saveToLS('layouts', layout);
 	}
 
 	onRemoveItem(i) {
-		console.log('removing', i);
 		this.setState({ items: _.reject(this.state.items, {i: i }) });
 	}
 
@@ -134,11 +140,12 @@ class Grid extends React.PureComponent {
 					onChange={this.handleChange}
 					options={[
 						{ value: 'one', label: 'One' },
-						{ value: 'two', label: 'Two' },
+						{ value: 'Photo', label: 'Photo' },
 						{ value: 'Clock', label: 'Clock' },
 					]}
 					/>
 				<button className='addButton' onClick={this.onAddItem}>Add Item</button>
+				<button className='reset' onClick={this.onLayoutReset}>Reset Layout</button>
 			</div>
 			<ResponsiveReactGridLayout
 				onLayoutChange={this.onLayoutChange}
