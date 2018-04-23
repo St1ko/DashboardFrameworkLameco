@@ -93,10 +93,10 @@ class Grid extends React.PureComponent {
 	onAddItem() {
 		if(this.state.selectedOption) {
 			console.log('adding', 'n' + this.state.newCounter + '; ' + this.state.selectedOption.value);
+			var wthrBool = this.state.selectedOption.value === 'Weather';
 		} else {
 			console.log('adding', 'n' + this.state.newCounter);
 		}
-		var wthrBool = this.state.selectedOption.value === 'Weather';
 
 		this.setState({
 			items: this.state.items.concat({
@@ -209,7 +209,6 @@ function getFromLS(key) {
 
 /* Save layout to local storage. */
 function saveToLS(key, value) {
-	console.log(value);
   if (global.localStorage) {
     global.localStorage.setItem(
       "rgl-8",
