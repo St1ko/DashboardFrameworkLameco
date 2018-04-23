@@ -8,6 +8,10 @@ import 'react-select/dist/react-select.css';
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || [];
 
+/* This class generates the layout for the web app. It renders the grid
+ * and it's items, but also button's and a dropdown menu, to control the grid.
+ */
+
 class Grid extends React.PureComponent {
 	static defaultProps = {
     className: "layout",
@@ -40,6 +44,10 @@ class Grid extends React.PureComponent {
 		this.onLayoutReset = this.onLayoutReset.bind(this);
   }
 
+	/* This function renders all grid items in the layout array. It creates a div
+	 * with a remove button, and content. The content managed by a switch statement,
+	 * which output is based on the widget property from the grid items.
+	 */
 	createElement(el) {
 		const removeStyle = {
 			position: 'absolute',
@@ -74,12 +82,17 @@ class Grid extends React.PureComponent {
 		);
 	}
 
+	/* The onAddItem() function is called when the user clicks on the 'Add Item' button.
+	 * It adds a new grid item to the state, and takes the selected item in the dropmenu
+	 * into account. This way the correct widget is loaded by the createElement() function.
+	 */
 	onAddItem() {
 		if(this.state.selectedOption) {
 			console.log('adding', 'n' + this.state.newCounter + '; ' + this.state.selectedOption.value);
 		} else {
 			console.log('adding', 'n' + this.state.newCounter);
 		}
+
 		this.setState({
 			items: this.state.items.concat({
 				i: 'n' + this.state.newCounter,
@@ -93,11 +106,15 @@ class Grid extends React.PureComponent {
 		});
 	}
 
+	/* onLayoutReset() is called when the user clicks on the 'Reset Layout' button.
+	 * It clears the localStorage and then issues a window refresh.
+	 */
 	onLayoutReset() {
 		localStorage.clear();
 		window.location.reload();
 	}
 
+	/* Calls back with breakpoint and new # cols */
 	onBreakPointChange(breakpoint, cols) {
 		this.setState({
 			breakpoint: breakpoint,
@@ -105,21 +122,27 @@ class Grid extends React.PureComponent {
 		});
 	}
 
+	/* Is called whenever the layout is changed. The for loop adds widget attribute
+	 * from items array to objects in layout array, so that the widget props
+	 * are also saved to localStorage. This is because objects in the layout array
+	 * do not include a widget property by default.
+	 */
 	onLayoutChange(layout) {
 		this.setState({ layout: layout });
-		/* add widget attribute from items array to objects in layout array,
-		 * so that widgets are also saved to localStorage
-		**/
 		for (var i = 0; i < this.state.items.length; i++) {
 			layout[i].widget = this.state.items[i].widget;
 		}
 		saveToLS('layouts', layout);
 	}
 
+	/* When a user presses the little 'x' in the top right corner of a grid item,
+	 * this function is called. It removes the corresponding grid item.
+	 */
 	onRemoveItem(i) {
 		this.setState({ items: _.reject(this.state.items, {i: i }) });
 	}
 
+	/* handleChange passes the selected dropdown item to the state. */
   handleChange = (selectedOption) => {
     this.setState({ selectedOption });
 		if (selectedOption) {
@@ -127,6 +150,10 @@ class Grid extends React.PureComponent {
 		};
   }
 
+	/* This render function, renders the grid, dropdown-menu, 'Add Item'-button
+	 * and 'Reset Layout'-button. This is also where the createElement() function
+	 * is called for each grid item.
+	 */
   render() {
 		const { selectedOption } = this.state;
     const value = selectedOption && selectedOption.value;
@@ -158,7 +185,7 @@ class Grid extends React.PureComponent {
   }
 }
 
-//retreive layout from local storage
+/* Retrieve layout from local storage. */
 function getFromLS(key) {
   let ls = {};
   if (global.localStorage) {
@@ -171,7 +198,7 @@ function getFromLS(key) {
   return ls[key];
 }
 
-//save layout to local storage
+/* Save layout to local storage. */
 function saveToLS(key, value) {
   if (global.localStorage) {
     global.localStorage.setItem(
