@@ -8,6 +8,7 @@
     "react-dropdown": "^1.4.0",
     "react-grid-layout": "^0.16.6",
     "react-live-clock": "^2.0.3",
+    "react-open-weather": "^0.3.0",
     "react-scripts": "1.1.4",
     "react-select": "^1.2.1"
   },

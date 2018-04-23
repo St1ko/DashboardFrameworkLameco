@@ -1,9 +1,10 @@
 import React from 'react';
 import _ from "lodash";
 import {WidthProvider, Responsive} from 'react-grid-layout';
-import Clock from './Clock.jsx';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
+import Clock from './Clock.jsx';
+import Weather from './Weather.jsx';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || [];
@@ -32,6 +33,9 @@ class Grid extends React.PureComponent {
 					w: originalLayouts[key].w,
 					h: originalLayouts[key].h,
 					widget: originalLayouts[key].widget,
+					minW: originalLayouts[key].minW,
+					minH: originalLayouts[key].minH,
+					maxH: originalLayouts[key].maxH
 				};
 			}),
 			selectedOption: '',
@@ -59,24 +63,24 @@ class Grid extends React.PureComponent {
 		const widget = el.widget;
 
 		return (
-			<div key={i} data-grid={el}>
-				<div className='widget'>
-					{(() => {
-						switch(widget) {
-							case 'Clock':
-								return <Clock/>;
-							case 'Photo':
-								return <div className='photo'></div>;
-							default:
-								return <span>{widget}</span>;
-							}
-						})()}
-				</div>
+			<div key={i} data-grid={el} minw = {widget === 'Weather' ? 4 : 0}>
+				{(() => {
+					switch(widget) {
+						case 'Clock':
+							return <Clock/>;
+						case 'Photo':
+							return <div className='photo'></div>;
+						case 'Weather':
+							return <Weather/>;
+						default:
+							return <span>{widget}</span>;
+						}
+					})()}
 				<span
 					className='remove'
 					style={removeStyle}
 					onClick={this.onRemoveItem.bind(this, i)} >
-					X
+					x
 				</span>
 			</div>
 		);
@@ -92,15 +96,19 @@ class Grid extends React.PureComponent {
 		} else {
 			console.log('adding', 'n' + this.state.newCounter);
 		}
+		var wthrBool = this.state.selectedOption.value === 'Weather';
 
 		this.setState({
 			items: this.state.items.concat({
 				i: 'n' + this.state.newCounter,
 				x: (this.state.items.length * 2) % (this.state.cols || 12),
 				y: Infinity,
-				w: 2,
-				h: 2,
+				w: wthrBool ? 4 : 2,
+				h: wthrBool ? 3 : 2,
 				widget: this.state.selectedOption ? this.state.selectedOption.value : '',
+				minW: wthrBool ? 4 : 0,
+				minH: wthrBool ? 3 : 0,
+				maxH: wthrBool ? 3 : 1000,
 			}),
 			newCounter: this.state.newCounter + 1
 		});
@@ -167,8 +175,9 @@ class Grid extends React.PureComponent {
 					onChange={this.handleChange}
 					options={[
 						{ value: 'one', label: 'One' },
-						{ value: 'Photo', label: 'Photo' },
 						{ value: 'Clock', label: 'Clock' },
+						{ value: 'Photo', label: 'Photo' },
+						{ value: 'Weather', label: 'Weather' },
 					]}
 					/>
 				<button className='addButton' onClick={this.onAddItem}>Add Item</button>
@@ -200,6 +209,7 @@ function getFromLS(key) {
 
 /* Save layout to local storage. */
 function saveToLS(key, value) {
+	console.log(value);
   if (global.localStorage) {
     global.localStorage.setItem(
       "rgl-8",
