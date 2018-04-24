@@ -63,7 +63,7 @@ class Grid extends React.PureComponent {
 		const widget = el.widget;
 
 		return (
-			<div key={i} data-grid={el} minw = {widget === 'Weather' ? 4 : 0}>
+			<div key={i} data-grid={el}>
 				{(() => {
 					switch(widget) {
 						case 'Clock':
@@ -105,7 +105,7 @@ class Grid extends React.PureComponent {
 				i: 'n' + this.state.newCounter,
 				x: (this.state.items.length * 2) % (this.state.cols || 12),
 				y: Infinity,
-				w: widgetProps.w, 
+				w: widgetProps.w,
 				h: widgetProps.h,
 				widget: selection ? selection.value : '',
 				minW: widgetProps.minW,
@@ -221,6 +221,7 @@ function saveToLS(key, value) {
     );
   }
 }
+
 /* returnProps function returns widget-specific properties like width, min width,
  * heigth, etc.
  */
@@ -236,9 +237,9 @@ function returnProps(selection) {
 			};
 		case 'Weather':
 			return {
-				w: 4,
+				w: 3,
 				h: 3,
-				minW: 4,
+				minW: 3,
 				minH: 3,
 				maxH: 3
 			};
