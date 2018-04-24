@@ -91,11 +91,13 @@ class Grid extends React.PureComponent {
 	 * into account. This way the correct widget is loaded by the createElement() function.
 	 */
 	onAddItem() {
-		if(this.state.selectedOption) {
-			console.log('adding', 'n' + this.state.newCounter + '; ' + this.state.selectedOption.value);
-			var wthrBool = this.state.selectedOption.value === 'Weather';
+		var selection = this.state.selectedOption ? this.state.selectedOption : 0;
+		var widgetProps = returnProps(selection.value);
+
+		if(selection) {
+			console.log('adding', 'n' + this.state.newCounter + '; ' + selection.value);
 		} else {
-			console.log('adding', 'n' + this.state.newCounter);
+			console.log('adding', 'n' + this.state.newCounter + '; empty');
 		}
 
 		this.setState({
@@ -103,12 +105,12 @@ class Grid extends React.PureComponent {
 				i: 'n' + this.state.newCounter,
 				x: (this.state.items.length * 2) % (this.state.cols || 12),
 				y: Infinity,
-				w: wthrBool ? 4 : 2,
-				h: wthrBool ? 3 : 2,
-				widget: this.state.selectedOption ? this.state.selectedOption.value : '',
-				minW: wthrBool ? 4 : 0,
-				minH: wthrBool ? 3 : 0,
-				maxH: wthrBool ? 3 : 1000,
+				w: widgetProps.w, 
+				h: widgetProps.h,
+				widget: selection ? selection.value : '',
+				minW: widgetProps.minW,
+				minH: widgetProps.minH,
+				maxH: widgetProps.maxH,
 			}),
 			newCounter: this.state.newCounter + 1
 		});
@@ -182,6 +184,7 @@ class Grid extends React.PureComponent {
 					/>
 				<button className='addButton' onClick={this.onAddItem}>Add Item</button>
 				<button className='reset' onClick={this.onLayoutReset}>Reset Layout</button>
+				<span className='title'>/Dash</span>
 			</div>
 			<ResponsiveReactGridLayout
 				onLayoutChange={this.onLayoutChange}
@@ -217,6 +220,37 @@ function saveToLS(key, value) {
       })
     );
   }
+}
+/* returnProps function returns widget-specific properties like width, min width,
+ * heigth, etc.
+ */
+function returnProps(selection) {
+	switch(selection) {
+		case 'Clock':
+			return {
+				w: 1.5,
+				h: 1,
+				minW: 1.5,
+				minH: 1,
+				maxH: 1000
+			};
+		case 'Weather':
+			return {
+				w: 4,
+				h: 3,
+				minW: 4,
+				minH: 3,
+				maxH: 3
+			};
+		default:
+			return {
+				w: 2,
+				h: 2,
+				minW: 1,
+				minH: 1,
+				maxH: 1000,
+			};
+	}
 }
 
 export default Grid;

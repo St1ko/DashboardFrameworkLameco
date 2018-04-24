@@ -9,7 +9,7 @@ class Weather extends React.Component {
 				forecast="today"
 				apikey="3086a287fb514f0e839112800180304"
 				type="city"
-				city="Eindhoven"/>
+				city="Ibiza"/>
 		);
 	}
 }

@@ -1,5 +1,12 @@
 .App {
   text-align: center;
+	background: pink;
+}
+
+#root {
+	background: #EEE9D1;
+	width: 100vw;
+	height: 100vh;
 }
 
 .rw-main.type-today {
@@ -7,8 +14,6 @@
 }
 
 .react-grid-layout {
-	background: white;
-  position: relative;
   transition: height 200ms ease;
 }
 .react-grid-item {
@@ -24,7 +29,9 @@
 }
 
 .klokje {
-	font-size: 20px;
+	font-family: Ubuntu;
+	background: transparent;
+	font-size: 35px;
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -36,7 +43,7 @@
 }
 
 .widgetselecter {
-	background-color: #6D6265;
+	background-color: #0A1C28;
 	padding-top: 10px;
 	padding-left: 10px;
 	height: 50px;
@@ -59,6 +66,14 @@
 	position: absolute;
 	top: 10px;
 	height: 36px;
+}
+
+.title {
+	font-family: Ubuntu;
+  float: right;
+	font-size: 30px;
+	color: white;
+	margin-right: 10px;
 }
 
 .photo {
