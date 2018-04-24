@@ -49,18 +49,40 @@
 	display: inline-block;
 }
 
+.Select-control {
+	border-radius: 0px !important;
+	border: none !important;
+	background-color: #F0F5F6 !important;
+}
+
 .addButton {
-	margin-left: 10px;
+	border-radius: 0px;
+	border: none;
+	background-color: #F0F5F6;
+	margin-left: 16px;
 	position: absolute;
 	top: 10px;
 	height: 36px;
 }
 
+.addButton:hover {
+	background-color: #E1E4E5;
+	transition: 1s;
+}
+
 .reset {
+	border-radius: 0px;
+	border: none;
+	background-color: #F0F5F6;
 	margin-left: 110px;
 	position: absolute;
 	top: 10px;
 	height: 36px;
+}
+
+.reset:hover {
+	background-color: #E1E4E5;
+	transition: 1s;
 }
 
 .title {
