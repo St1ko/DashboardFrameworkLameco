@@ -1,9 +1,10 @@
 import React from 'react';
 import _ from "lodash";
 import {WidthProvider, Responsive} from 'react-grid-layout';
-import Clock from './Clock.jsx';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
+import Clock from './Clock.jsx';
+import Weather from './Weather.jsx';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const originalLayouts = getFromLS("layouts") || [];
@@ -32,6 +33,9 @@ class Grid extends React.PureComponent {
 					w: originalLayouts[key].w,
 					h: originalLayouts[key].h,
 					widget: originalLayouts[key].widget,
+					minW: originalLayouts[key].minW,
+					minH: originalLayouts[key].minH,
+					maxH: originalLayouts[key].maxH
 				};
 			}),
 			selectedOption: '',
@@ -60,23 +64,23 @@ class Grid extends React.PureComponent {
 
 		return (
 			<div key={i} data-grid={el}>
-				<div className='widget'>
-					{(() => {
-						switch(widget) {
-							case 'Clock':
-								return <Clock/>;
-							case 'Photo':
-								return <div className='photo'></div>;
-							default:
-								return <span>{widget}</span>;
-							}
-						})()}
-				</div>
+				{(() => {
+					switch(widget) {
+						case 'Clock':
+							return <Clock/>;
+						case 'Photo':
+							return <div className='photo'></div>;
+						case 'Weather':
+							return <Weather/>;
+						default:
+							return <span>{widget}</span>;
+						}
+					})()}
 				<span
 					className='remove'
 					style={removeStyle}
 					onClick={this.onRemoveItem.bind(this, i)} >
-					X
+					x
 				</span>
 			</div>
 		);
@@ -87,10 +91,13 @@ class Grid extends React.PureComponent {
 	 * into account. This way the correct widget is loaded by the createElement() function.
 	 */
 	onAddItem() {
-		if(this.state.selectedOption) {
-			console.log('adding', 'n' + this.state.newCounter + '; ' + this.state.selectedOption.value);
+		var selection = this.state.selectedOption ? this.state.selectedOption : 0;
+		var widgetProps = returnProps(selection.value);
+
+		if(selection) {
+			console.log('adding', 'n' + this.state.newCounter + '; ' + selection.value);
 		} else {
-			console.log('adding', 'n' + this.state.newCounter);
+			console.log('adding', 'n' + this.state.newCounter + '; empty');
 		}
 
 		this.setState({
@@ -98,9 +105,12 @@ class Grid extends React.PureComponent {
 				i: 'n' + this.state.newCounter,
 				x: (this.state.items.length * 2) % (this.state.cols || 12),
 				y: Infinity,
-				w: 2,
-				h: 2,
-				widget: this.state.selectedOption ? this.state.selectedOption.value : '',
+				w: widgetProps.w,
+				h: widgetProps.h,
+				widget: selection ? selection.value : '',
+				minW: widgetProps.minW,
+				minH: widgetProps.minH,
+				maxH: widgetProps.maxH,
 			}),
 			newCounter: this.state.newCounter + 1
 		});
@@ -167,12 +177,14 @@ class Grid extends React.PureComponent {
 					onChange={this.handleChange}
 					options={[
 						{ value: 'one', label: 'One' },
-						{ value: 'Photo', label: 'Photo' },
 						{ value: 'Clock', label: 'Clock' },
+						{ value: 'Photo', label: 'Photo' },
+						{ value: 'Weather', label: 'Weather' },
 					]}
 					/>
 				<button className='addButton' onClick={this.onAddItem}>Add Item</button>
 				<button className='reset' onClick={this.onLayoutReset}>Reset Layout</button>
+				<span className='title'>/Dash</span>
 			</div>
 			<ResponsiveReactGridLayout
 				onLayoutChange={this.onLayoutChange}
@@ -208,6 +220,38 @@ function saveToLS(key, value) {
       })
     );
   }
+}
+
+/* returnProps function returns widget-specific properties like width, min width,
+ * heigth, etc.
+ */
+function returnProps(selection) {
+	switch(selection) {
+		case 'Clock':
+			return {
+				w: 1.5,
+				h: 1,
+				minW: 1.5,
+				minH: 1,
+				maxH: 1000
+			};
+		case 'Weather':
+			return {
+				w: 3,
+				h: 3,
+				minW: 3,
+				minH: 3,
+				maxH: 3
+			};
+		default:
+			return {
+				w: 2,
+				h: 2,
+				minW: 1,
+				minH: 1,
+				maxH: 1000,
+			};
+	}
 }
 
 export default Grid;
