@@ -23,6 +23,8 @@ $ npm start
 $ npm build
 ```
 
+## Deployment
+
 
 ## Build with
 * [NodeJs]()
@@ -34,11 +36,10 @@ $ npm build
 #### Developers
 * Stijn Albert
 * Steven van der Linden
+* Wesley van Gogh
 
 #### Designers
 * Charly vos
 * Jesse Wolters
 * Corinne Dohmen
-
-#### Mascotte
 * Wesley van Gogh
